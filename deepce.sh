@@ -285,7 +285,7 @@ installPackages() {
 
   elif [ -x "$(command -v apk)" ]; then
     # Alpine
-    apk add bind-tools curl nmap libcap
+    apk add bind-tools curl nmap libcap grep
   elif [ -x "$(command -v yum)" ]; then
     # CentOS / Fedora
     yum install bind-utils curl nmap libcap

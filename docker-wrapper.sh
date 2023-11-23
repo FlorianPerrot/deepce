@@ -28,9 +28,11 @@ fi
 containers=$(docker ps --format "{{.Names}}")
 for container in $containers
 do
-    echo "Running deepce on docker container: $container"
-    docker exec "$container" mkdir -p /deepce
-    docker cp "$SCRIPTPATH/deepce.sh" "$container:/deepce/"
-    docker exec "$container" /deepce/deepce.sh --delete | tee "docker-$container.log"
-    docker exec "$container" rm -rf /deepce
+    container_home=$(docker exec $container printenv HOME)/deepce
+    echo "Running deepce on docker container: $container on $container_home"
+    docker exec "$container" mkdir -p $container_home
+    docker cp "$SCRIPTPATH/deepce.sh" "${container}:${container_home}"
+    docker exec -u root "$container" $container_home/deepce.sh --install -ne -q
+    docker exec "$container" $container_home/deepce.sh --delete | tee "docker-$container.log"
+    docker exec "$container" rm -rf $container_home
 done
